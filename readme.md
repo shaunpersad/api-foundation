@@ -22,11 +22,11 @@ For excellent descriptions of OAuth 2.0 and how it is implemented, please check 
 
 As a high-level introduction to how OAuth 2.0 is used in ApiFoundation, essentially there is a "Token" endpoint where, given particular parameters (such as a user's username and password), returns an Access Token which (usually) maps directly to a user and can then be used to authenticate future API requests.
 
-Those particular parameters are determined by which Grant Type you choose to use in your API.  There are several grant types to choose from:
+Those particular parameters are determined by which Grant Type you choose to use in your API.  There are several Grant Types to choose from:
 
 * **Authorization Code**: this is the standard OAuth 2.0 implementation.  If you've ever used Facebook's Graph API OAuth 2.0 implementation, this is essentially that flow, where
 a user is directed to a login screen where they can log in to your system somehow and then authorize an app.  Doing so returns an Authorization Code (which, remember, is not the same as an Access Token!).
-This authorization code can then be sent to your API's Token endpoint to receive an Access Token.
+This Authorization Code can then be sent to your API's Token endpoint to receive an Access Token.
 
 * **Password (User Credentials)**: simpler implementation, where the user's username and password are sent to the Token endpoint directly to receive an Access Token.  This is the most convenient way to authenticate a user.
 
@@ -36,10 +36,10 @@ This authorization code can then be sent to your API's Token endpoint to receive
 
 * **Implicit**: This is the same as the Authorization Code Grant Type, except instead of the Authorization Code being returned when a user logs in to your system, the Access Token is returned directly.  This would typically be the preferred method when using the API in front-end JavaScript.
 
-* **Facebook Access Token (Custom grant type)**: You may create your own Grant Types.  One such custom Grant Type is the "Facebook Access Token" Grant Type, which allows you to send a Facebook access token to the Token endpoint to receive an Access Token.
+* **Facebook Access Token (Custom Grant Type)**: You may create your own Grant Types.  One such custom Grant Type is the "Facebook Access Token" Grant Type, which allows you to send a Facebook access token to the Token endpoint to receive an Access Token.
 In other words, it exchanges a Facebook access token (which identifies a FACEBOOK user) for one of your resource server's Access Tokens (which identifies one of YOUR users).  So, if your app has a "login with Facebook" feature, the access token returned by Facebook at the end of the Facebook auth flow can then be used to create and/or identify a user in your system.
 
-Supporting multiple grant types means that your API can be used in numerous situations while still providing a secure method for access, including in mobile apps, in front-end JavaScript, or even completely server-side.
+Supporting multiple Grant Types means that your API can be used in numerous situations while still providing a secure method for access, including in mobile apps, in front-end JavaScript, or even completely server-side.
 
 ## Installation
 
@@ -50,7 +50,7 @@ You may use ApiFoundation with new projects or existing, however existing projec
 Install via composer.
 >require: "shaunpersad/api-foundation": "dev-master"
 
-Add the service provider to your list of providers in app/config/app.php:
+Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
 
 Publish the included config file, to make it available to your project for modification:
@@ -61,13 +61,13 @@ This copies the config file to app/config/packages/shaunpersad/api-foundation
 Run the included migrations (Note: this will create a "users" table):
 >php artisan migrate --package="shaunpersad/api-foundation"
 
-This is an included database seeder which you may wish to use as a basis for your own seeder: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php
+This is an included database seeder which you may wish to use as a basis for your own seeder: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php`
 
 The config file and the created tables are designed to work together out of the box, however should you choose to modify the users table, please check the config file to make sure you change the appropriate values.
 
 Also, if you plan to utilize Facebook integration, please set a Facebook App ID and a Facebook App Secret in the config file.
 
-Find the included sample-routes.php file: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php
+Find the included `sample-routes.php` file: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php`
 
 In it, you will find the various routes you may wish to implement, which will be described in further detail in the "Endpoints" section.
 
@@ -76,7 +76,7 @@ In it, you will find the various routes you may wish to implement, which will be
 Install via composer.
 >require: "shaunpersad/api-foundation": "dev-master"
 
-Add the service provider to your list of providers in app/config/app.php:
+Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
 
 Publish the included config file, to make it available to your project for modification:
@@ -84,7 +84,7 @@ Publish the included config file, to make it available to your project for modif
 
 If you already have your own "users" table, DO NOT run the included migrations.  Instead, create your own migration, then find the included create_oauth_tables migration file (shaunpersad/api-foundation/src/migrations/) and copy the code into your own migration file, then run this migration.
 
-This is an included database seeder which you may wish to use as a basis for your own seeder: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php
+This is an included database seeder which you may wish to use as a basis for your own seeder: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php`
 
 If you are using your own "users" table, then you will likely need to modify the config file to point ApiFoundation to the correct fields in your users table.
 Note: you will need to have a field that corresponds to a "username", e.g. an email address or an actual username.  You will also need to have a password field.
@@ -114,13 +114,13 @@ While technically you may override any and all methods, you should only have to 
 
   Creates a new user in your system based on their Facebook information.
 
-If using Facebook integration, you may also need to extend the FacebookAccessToken grant type if you wish to control exactly how a
+If using Facebook integration, you may also need to extend the FacebookAccessToken Grant Type if you wish to control exactly how a
 Facebook access token gets exchanged for one of your access tokens.  For example, if you do not wish to use the Facebook user's email address
 as their username.
 
 In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also extend the ApiFoundationServiceProvider, and override the makeOauth2() method, which creates the oauth2 singleton (see the "IoC Bindings" section).
 
-Find the included sample-routes.php file: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php
+Find the included `sample-routes.php` file: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php`
 
 In it, you will find the various routes you may wish to implement, which will be described in further detail in the "Usage" section.
 Please read through the comments for each route as you implement them.
@@ -128,20 +128,20 @@ Please read through the comments for each route as you implement them.
 
 ## Endpoints
 
-The sample-routes.php file contains several routes which can be identified as the following kinds of API endpoints:
+The `sample-routes.php` file contains several routes which can be identified as the following kinds of API endpoints:
 
 ### The Authorize endpoint
 
-In the sample-routes.php file, this is the /authorize route.
-This endpoint is used with the Authorization Code grant type.
+In the `sample-routes.php file`, this is the `/authorize` route.
+This endpoint is used with the Authorization Code Grant Type.
 A GET request to this endpoint should display a form or other method for a user to log in to your system.
 A POST request to this endpoint should process the login and redirect the user to either a specified "redirect_uri" or back to the form with an error message.
-If the user is redirected to the "redirect_uri", that URI should also contain either the Authorization Code ("code" query param), or the Access Token in the URL fragment if the grant type is "Implicit".
+If the user is redirected to the "redirect_uri", that URI should also contain either the Authorization Code ("code" query param), or the Access Token in the URL fragment if the Grant Type is "Implicit".
 
 ### The Token endpoint
 
-In the sample-routes.php file, this is the /api/v1/get-token route.
-This is the endpoint that, based on whichever grant type you are using, particular parameters are sent and an Access Token is received.
+In the `sample-routes.php` file, this is the `/api/v1/get-token` route.
+This is the endpoint that, based on whichever Grant Type you are using, particular parameters are sent and an Access Token is received.
 All requests to this endpoint must have a 'client_id' param, either as a query param, or in the Authorize HTTP Header (Http Basic).
 'client_secret' should only be present if your app uses one.  Apps should not use client secrets if the
 secrecy of the secret cannot be guaranteed.  If your app does use one, supply it either as a query param
@@ -149,17 +149,17 @@ or in the Authorize HTTP Header (Http Basic).
 
 ### The Redirect endpoint
 
-In the sample-routes.php file, this is the /login-redirect route.
+In the `sample-routes.php` file, this is the `/login-redirect` route.
 This is the URI that you'd want the user to be redirected to after being authorized through the Authorize endpoint.
 
 ### Resource endpoint
 
-In the sample-routes.php file, this is the /api/v1/me route.
+In the `sample-routes.php` file, this is the `/api/v1/me` route.
 This is an example of an API resource.  Passing a valid access token to this route will return that authenticated user ("me") as a resource.
 
 ### Facebook routes
 
-There are two additional routes included to demonstrate the Facebook Access Token grant type.
+There are two additional routes included to demonstrate the Facebook Access Token Grant Type.
 With the Facebook App ID and Secret supplied in the config file, the /get-facebook-login route will redirect you to Facebook to log in and authorize your Facebook app.
 After authorizing, Facebook will redirect you to the /facebook-login-redirect route, and display your Facebook access token.
 This Facebook access token can then be sent to the Token endpoint to exchange for one of your app's Access Tokens.
@@ -168,7 +168,7 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
 
  * **oauth2** - a *singleton* which is the underlying OAuth 2.0 server object made by bshaffer's Oauth2 Server Library: http://bshaffer.github.io/oauth2-server-php-docs/.
  * **requires_oauth_token** - a *filter* which restricts routes to requiring a valid Access Token (as the "access_token" param).
- * **authorize_request** - a *binding* which creates a request for the Authorize endpoint.  You should pass in a "validate_error_callback" and a "validate_success_callback" to this when creating.  See the implementation in the sample-routes.php file.
+ * **authorize_request** - a *binding* which creates a request for the Authorize endpoint.  You should pass in a "validate_error_callback" and a "validate_success_callback" to this when creating.  See the implementation in the `sample-routes.php` file.
  * **authorize_response** - a *binding* which creates a response for a request to the Authorize endpoint.  You should pass in the "is_authorized" parameter to indicate whether or not the user authorized your app, as well as the "user_id" parameter to indicate which user (if any) committed this action.
  * **token_response** - a *binding* which creates a response for the Token endpoint.  This response will include either an Access Token, or error information.
  * **api_response_array** - a *binding* which creates the structure for every API response.  This structure can be changed by simply extending our service provider and overriding the makeAPIResponseArray method.
@@ -188,32 +188,32 @@ For reproducibility, all examples shown have the following assumptions:
 
  * installation of this package in a brand new project
  * you have seeded the database with the data in the included seeder
- * you have copied all the routes from sample-routes.php into your routes
- * the base URL is "http://apitest.local"
+ * you have copied all the routes from `sample-routes.php` into your routes
+ * the base URL is `http://apitest.local`
  * the Token endpoint is a POST
  * the client secret is not used
  * the client id is passed in the request body (although in the headers is preferred)
 
 ### Using Authorization Code Grant Types
 
-In your browser, navigate to http://apitest.local/authorize.
-You should get an error, as the comments in the sample-routes.php file state that:
+In your browser, navigate to `http://apitest.local/authorize`.
+You should get an error, as the comments in the `sample-routes.php` file state that:
 
-You must also have the response_type, client_id, state, and redirect_uri set in the URL query, with response_type = "code" if not implicit ("token" if implicit) client_id = your client id, state = any random thing, redirect_uri = a valid redirect_uri from the database.
+You must also have the `response_type`, `client_id`, `state`, and `redirect_uri` set in the URL query, with `response_type` = "code" if not implicit (`token` if implicit) `client_id` = your client id, `state` = any random thing, `redirect_uri` = a valid redirect_uri from the database.
 
 With the data from the included seeder,
-client_id = "testclient",
-redirect_uri = "http://apitest.local/login-redirect"
+`client_id` = "testclient",
+`redirect_uri` = "http://apitest.local/login-redirect"
 Including these in the URL query will cause the login form will be displayed properly.
 
-e.g. http://apitest.local/authorize?client_id=testclient&response_type=code&redirect_uri=http://apitest.local/login-redirect&state=sdjf
+>e.g. http://apitest.local/authorize?client_id=testclient&response_type=code&redirect_uri=http://apitest.local/login-redirect&state=sdjf
 
 For error checking, try removing parameters.
 
-Authorize the app by clicking the "yes" button, with valid credentials.  If using the included seeder, "admin@local.com" and "password" should suffice.
-You should then be redirected to the redirect_uri supplied, with the "code" parameter in the URL as your Authorization Code, or the access_token parameter in the URL fragment as your Access Token if the response_type param was set to "token".
+Authorize the app by clicking the "yes" button, with valid credentials.  If using the included seeder, `admin@local.com` and `password` should suffice.
+You should then be redirected to the redirect_uri supplied, with the `code` parameter in the URL as your Authorization Code, or the `access_token` parameter in the URL fragment as your Access Token if the `response_type` parameter was set to `token`.
 
-If you received an Authorization Code, you may then POST it (along with the other required params) to the Token endpoint to receive an access token
+If you received an Authorization Code, you may then POST it (along with the other required params) to the Token endpoint to receive an Access Token
 
 e.g. (Using CocoaRestClient): https://www.dropbox.com/s/c4m86xgu94fpr1r/Screenshot%202014-06-23%2017.14.41.png
 
@@ -232,7 +232,7 @@ You may then POST it (along with the other required params) to the Token endpoin
 
 ### Accessing resources using Access Tokens
 
-POST to the "me" endpoint with a valid access token:
+POST to the "me" endpoint with a valid Access Token:
 
 1. the seeded user: https://www.dropbox.com/s/dr48oanlpq2k9ju/Screenshot%202014-06-23%2017.27.06.png
 2. the facebook user: https://www.dropbox.com/s/h0t0f1e482llbu9/Screenshot%202014-06-23%2017.25.33.png
