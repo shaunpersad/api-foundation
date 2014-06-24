@@ -56,7 +56,7 @@ Add the service provider to your list of providers in `app/config/app.php`:
 Publish the included config file, to make it available to your project for modification:
 >php artisan config:publish shaunpersad/api-foundation
 
-This copies the config file to app/config/packages/shaunpersad/api-foundation
+This copies the config file to `app/config/packages/shaunpersad/api-foundation`
 
 Run the included migrations (Note: this will create a "users" table):
 >php artisan migrate --package="shaunpersad/api-foundation"
@@ -82,7 +82,7 @@ Add the service provider to your list of providers in `app/config/app.php`:
 Publish the included config file, to make it available to your project for modification:
 >php artisan config:publish shaunpersad/api-foundation
 
-If you already have your own "users" table, DO NOT run the included migrations.  Instead, create your own migration, then find the included create_oauth_tables migration file (shaunpersad/api-foundation/src/migrations/) and copy the code into your own migration file, then run this migration.
+If you already have your own "users" table, DO NOT run the included migrations.  Instead, create your own migration, then find the included create_oauth_tables migration file (`shaunpersad/api-foundation/src/migrations/`) and copy the code into your own migration file, then run this migration.
 
 This is an included database seeder which you may wish to use as a basis for your own seeder: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php`
 
@@ -160,8 +160,8 @@ This is an example of an API resource.  Passing a valid access token to this rou
 ### Facebook routes
 
 There are two additional routes included to demonstrate the Facebook Access Token Grant Type.
-With the Facebook App ID and Secret supplied in the config file, the /get-facebook-login route will redirect you to Facebook to log in and authorize your Facebook app.
-After authorizing, Facebook will redirect you to the /facebook-login-redirect route, and display your Facebook access token.
+With the Facebook App ID and Secret supplied in the config file, the `/get-facebook-login` route will redirect you to Facebook to log in and authorize your Facebook app.
+After authorizing, Facebook will redirect you to the `/facebook-login-redirect` route, and display your Facebook access token.
 This Facebook access token can then be sent to the Token endpoint to exchange for one of your app's Access Tokens.
 
 ## IoC Bindings
@@ -189,14 +189,14 @@ For reproducibility, all examples shown have the following assumptions:
  * installation of this package in a brand new project
  * you have seeded the database with the data in the included seeder
  * you have copied all the routes from `sample-routes.php` into your routes
- * the base URL is `http://apitest.local`
+ * the base URL is http://apitest.local
  * the Token endpoint is a POST
  * the client secret is not used
  * the client id is passed in the request body (although in the headers is preferred)
 
 ### Using Authorization Code Grant Types
 
-In your browser, navigate to `http://apitest.local/authorize`.
+In your browser, navigate to http://apitest.local/authorize.
 You should get an error, as the comments in the `sample-routes.php` file state that:
 
 You must also have the `response_type`, `client_id`, `state`, and `redirect_uri` set in the URL query, with `response_type` = "code" if not implicit (`token` if implicit) `client_id` = your client id, `state` = any random thing, `redirect_uri` = a valid redirect_uri from the database.
