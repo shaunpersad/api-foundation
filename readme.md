@@ -9,7 +9,7 @@ Additionally, it also standardizes all API responses into an easily definable fo
 * **Authorization Code**: After a successful Authorization process, an Authorization Code is returned.  This code can then be exchanged for an Access Token.
 * **Access Token**: A token presented when accessing a protected resource.  Often, this access token acts on behalf of a specific user in your system (however this does not always have to be the case).
 * **Authentication**: Making a request for an Access Token.  The structure and requirements for this request are based on the Grant Types implemented by the app.
-* **Grant Type**: The Authentication method used.  ApiFoundation implemented multiple Grant Types, and allows for custom Grant Types to be created.
+* **Grant Type**: The Authentication method used.  ApiFoundation implements multiple Grant Types, and allows for custom Grant Types to be created.
 * **Client**: An app that is using your API.  It can be anything: a website, mobile app, or a server.  "Client" and "app" will be used interchangeably in this doc.
 * **Client ID**: Used to identify an app.
 * **Client Secret**: A password used to verify the client.  Optional, and, according to OAuth 2.0, MUST be excluded if this secret is at risk of being exposed publicly.
@@ -32,11 +32,11 @@ This authorization code can then be sent to your API's Token endpoint to receive
 
 * **Client Credentials**:  the app's Client ID and Client Secret are sent to the Token endpoint to receive an Access Token.  This Access Token does not map to a user, however.  In essence, this is the app itself using the API, with access only to the resources under the app's control (as opposed to those accessible to a user).
 
-* **Refresh Token**:  A "Refresh Token" is sent back when a user is authenticated via the Authorization Code or Password Grant Types.  This Refresh Token can then be sent back to the Token endpoint for a fresh Access Token.
+* **Refresh Token**:  A "Refresh Token" is sent back along with the Access Token when a user is authenticated via the Authorization Code or Password Grant Types.  This Refresh Token can then be sent back to the Token endpoint for a fresh Access Token.
 
 * **Implicit**: This is the same as the Authorization Code Grant Type, except instead of the Authorization Code being returned when a user logs in to your system, the Access Token is returned directly.  This would typically be the preferred method when using the API in front-end JavaScript.
 
-* **(Custom grant type) Facebook Access Token**: You may create your own Grant Types.  One such custom Grant Type is the "Facebook Access Token" grant type, which allows you to send a Facebook access token to the Token endpoint to receive an Access Token.
+* **Facebook Access Token (Custom grant type)**: You may create your own Grant Types.  One such custom Grant Type is the "Facebook Access Token" Grant Type, which allows you to send a Facebook access token to the Token endpoint to receive an Access Token.
 In other words, it exchanges a Facebook access token (which identifies a FACEBOOK user) for one of your resource server's Access Tokens (which identifies one of YOUR users).  So, if your app has a "login with Facebook" feature, the access token returned by Facebook at the end of the Facebook auth flow can then be used to create and/or identify a user in your system.
 
 Supporting multiple grant types means that your API can be used in numerous situations while still providing a secure method for access, including in mobile apps, in front-end JavaScript, or even completely server-side.
@@ -49,10 +49,13 @@ You may use ApiFoundation with new projects or existing, however existing projec
 
 Install via composer.
 
-Add the service provider to your list of providers in app/config/app.php: 'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
+Add the service provider to your list of providers in app/config/app.php:
+>'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
 
 Publish the included config file, to make it available to your project for modification:
 >php artisan config:publish shaunpersad/api-foundation
+
+This copies the config file to app/config/packages/shaunpersad/api-foundation
 
 Run the included migrations (Note: this will create a "users" table):
 >php artisan migrate --package="shaunpersad/api-foundation"
@@ -71,7 +74,8 @@ In it, you will find the various routes you may wish to implement, which will be
 
 Install via composer.
 
-Add the service provider to your list of providers in app/config/app.php: 'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
+Add the service provider to your list of providers in app/config/app.php:
+>'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
 
 Publish the included config file, to make it available to your project for modification:
 >php artisan config:publish shaunpersad/api-foundation
@@ -106,11 +110,13 @@ While technically you may override any and all methods, you should only have to 
 
 * >createFacebookUser (GraphUser $facebook_user):void
 
-  Creates a new user based on their facebook information.
+  Creates a new user in your system based on their Facebook information.
 
 If using Facebook integration, you may also need to extend the FacebookAccessToken grant type if you wish to control exactly how a
 Facebook access token gets exchanged for one of your access tokens.  For example, if you do not wish to use the Facebook user's email address
 as their username.
+
+In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also extend the ApiFoundationServiceProvider, and override the makeOauth2() method, which creates the oauth2 singleton (see the "IoC Bindings" section).
 
 Find the included sample-routes.php file: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php
 
@@ -121,11 +127,6 @@ Please read through the comments for each route as you implement them.
 ## Endpoints
 
 The sample-routes.php file contains several routes which can be grouped as the following kinds of API endpoints:
-
-* "authorize" endpoint
-* "token" endpoint
-* "redirect" endpoint
-* "resource" endpoint
 
 ### The Authorize endpoint
 
@@ -163,12 +164,12 @@ This Facebook Access Token can then be sent to the token endpoint to exchange fo
 
 ## IoC Bindings
 
- * "oauth2" - a singleton which is the underlying OAuth 2.0 server object made by bshaffer.
- * "requires_oauth_token" - a filter which restricts routes to requiring a valid Access Token (as the "access_token" param).
- * "authorize_request" - a binding which creates a request for the Authorize endpoint.  You should pass in a "validate_error_callback" and a "validate_success_callback" to this when creating.  See the implementation in the sample-routes.php file.
- * "authorize_response" - a binding which creates a response for a request to the Authorize endpoint.  You should pass in the "is_authorized" parameter to indicate whether or not the user authorized your app, as well as the "user_id" parameter to indicate which user (if any) committed this action.
- * "token_response" - a binding which creates a response for the Token endpoint.  This response will include either an Access Token, or error information.
- * "api_response_array" - a binding which creates the structure for every API response.  This structure can be changed by simply extending our service provider and overriding the makeAPIResponseArray method.
+ * **oauth2** - a *singleton* which is the underlying OAuth 2.0 server object made by bshaffer.
+ * **requires_oauth_token** - a *filter* which restricts routes to requiring a valid Access Token (as the "access_token" param).
+ * **authorize_request** - a *binding* which creates a request for the Authorize endpoint.  You should pass in a "validate_error_callback" and a "validate_success_callback" to this when creating.  See the implementation in the sample-routes.php file.
+ * **authorize_response** - a *binding* which creates a response for a request to the Authorize endpoint.  You should pass in the "is_authorized" parameter to indicate whether or not the user authorized your app, as well as the "user_id" parameter to indicate which user (if any) committed this action.
+ * **token_response** - a *binding* which creates a response for the Token endpoint.  This response will include either an Access Token, or error information.
+ * **api_response_array** - a *binding* which creates the structure for every API response.  This structure can be changed by simply extending our service provider and overriding the makeAPIResponseArray method.
 
 ## Examples
 
@@ -179,6 +180,7 @@ For reproducibility, all examples shown have the following assumptions:
  * the base URL is "http://apitest.local"
  * the Token endpoint is a POST
  * the client secret is not used
+ * the client id is passed in the request body (although in the headers is preferred)
 
 ### Authorization Code
 
@@ -201,7 +203,7 @@ You should then be redirected to the redirect_uri supplied, with the "code" para
 
 If you received an Authorization Code, you may then POST it (along with the other required params) to the Token endpoint to receive an access token
 
-e.g. Using CocoaRestClient: https://www.dropbox.com/s/c4m86xgu94fpr1r/Screenshot%202014-06-23%2017.14.41.png
+e.g. (Using CocoaRestClient): https://www.dropbox.com/s/c4m86xgu94fpr1r/Screenshot%202014-06-23%2017.14.41.png
 
 ### Password
 
@@ -220,5 +222,5 @@ You may then POST it (along with the other required params) to the Token endpoin
 
 POST to the "me" endpoint with a valid access token:
 
-1) the admin@local.com user: https://www.dropbox.com/s/dr48oanlpq2k9ju/Screenshot%202014-06-23%2017.27.06.png
-2) the facebook user: https://www.dropbox.com/s/h0t0f1e482llbu9/Screenshot%202014-06-23%2017.25.33.png
+1. the admin@local.com user: https://www.dropbox.com/s/dr48oanlpq2k9ju/Screenshot%202014-06-23%2017.27.06.png
+2. the facebook user: https://www.dropbox.com/s/h0t0f1e482llbu9/Screenshot%202014-06-23%2017.25.33.png
