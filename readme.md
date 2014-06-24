@@ -4,28 +4,40 @@ This is a package for Laravel 4 that provides a basis for creating APIs.  Partic
 
 Additionally, it also standardizes all API responses into an easily definable format.
 
+## Key Concepts
+* **Authorization**: A user must give permission for an app to access their resources on the resource server. E.g. When logging in to an app via Facebook, you are giving that app permission to access your resources on Facebook.
+* **Authorization Code**: After a successful Authorization process, an Authorization Code is returned.  This code can then be exchanged for an Access Token.
+* **Access Token**: A token presented when accessing a protected resource.  Often, this access token acts on behalf of a specific user in your system (however this does not always have to be the case).
+* **Authentication**: Making a request for an Access Token.  The structure and requirements for this request are based on the Grant Types implemented by the app.
+* **Grant Type**: The Authentication method used.  ApiFoundation implemented multiple Grant Types, and allows for custom Grant Types to be created.
+* **Client**: An app that is using your API.  It can be anything: a website, mobile app, or a server.  "Client" and "app" will be used interchangeably in this doc.
+* **Client ID**: Used to identify an app.
+* **Client Secret**: A password used to verify the client.  Optional, and, according to OAuth 2.0, MUST be excluded if this secret is at risk of being exposed publicly.
+
+## OAuth 2.0 in ApiFoundation
+
 OAuth 2.0 support is built on top of bshaffer's Oauth2 Server Library for PHP: http://bshaffer.github.io/oauth2-server-php-docs/
 
 For excellent descriptions of OAuth 2.0 and how it is implemented, please check out his documentation.
 
-As a high-level introduction to how OAuth 2.0 is used in ApiFoundation, essentially there is a "token" endpoint where, given particular parameters (such as a user's username and password), returns an access token which maps directly to a user and can then be used to authenticate future API requests.
+As a high-level introduction to how OAuth 2.0 is used in ApiFoundation, essentially there is a "Token" endpoint where, given particular parameters (such as a user's username and password), returns an Access Token which (usually) maps directly to a user and can then be used to authenticate future API requests.
 
-Those particular parameters are determined by which "grant type" you choose to use in your API.  There are several grant types to choose from:
+Those particular parameters are determined by which Grant Type you choose to use in your API.  There are several grant types to choose from:
 
 * **Authorization Code**: this is the standard OAuth 2.0 implementation.  If you've ever used Facebook's Graph API OAuth 2.0 implementation, this is essentially that flow, where
-a user is directed to a login screen where they can log in to your system somehow and then authorize an app.  Doing so returns an "authorization code" (which is not the same as an access token!).
-This authorization code can then be sent to your API's token endpoint to receive an access token.
+a user is directed to a login screen where they can log in to your system somehow and then authorize an app.  Doing so returns an Authorization Code (which, remember, is not the same as an Access Token!).
+This authorization code can then be sent to your API's Token endpoint to receive an Access Token.
 
-* **Password**: simpler implementation, where the user's username and password are sent to the token endpoint directly to receive an access token.  This is the most convenient way to authenticate a user.
+* **Password (User Credentials)**: simpler implementation, where the user's username and password are sent to the Token endpoint directly to receive an Access Token.  This is the most convenient way to authenticate a user.
 
-* **Client Credentials**:  the app's client id and secret are sent to the token endpoint to receive an access token.  This access token does not map to a user, however.  Im essence, this is the app itself using the API, with access only to the resources under the app's control (as opposed to those accessible to a user).
+* **Client Credentials**:  the app's Client ID and Client Secret are sent to the Token endpoint to receive an Access Token.  This Access Token does not map to a user, however.  In essence, this is the app itself using the API, with access only to the resources under the app's control (as opposed to those accessible to a user).
 
-* **Refresh Token**:  A "refresh token" is sent back when a user is authenticated via the Authorization Code or Password grant types.  This token can then be sent back to the token endpoint for a fresh access token.
+* **Refresh Token**:  A "Refresh Token" is sent back when a user is authenticated via the Authorization Code or Password Grant Types.  This Refresh Token can then be sent back to the Token endpoint for a fresh Access Token.
 
-* **Implicit**: This is the same as the Authorization Code grant type, except instead of the authorization code being returned when a user logs in to your system, the access token is returned directly.  This would typically be the preferred method when using the API in front-end JavaScript.
+* **Implicit**: This is the same as the Authorization Code Grant Type, except instead of the Authorization Code being returned when a user logs in to your system, the Access Token is returned directly.  This would typically be the preferred method when using the API in front-end JavaScript.
 
-* **(Custom grant type) Facebook Access Token**: You may create your own grant types.  One such custom grant type is the Facebook Access Token grant type, which allows you to send a Facebook access token to the token endpoint to receive an access token.
-In other words, it exchanges a Facebook access token (which identifies a FACEBOOK user) for one of your app's access tokens (which identifies one of YOUR users).  So, if your app has a "login with Facebook" feature, the access token returned by Facebook at the end of their auth flow can then be used to create and/or identify a user in your system.
+* **(Custom grant type) Facebook Access Token**: You may create your own Grant Types.  One such custom Grant Type is the "Facebook Access Token" grant type, which allows you to send a Facebook access token to the Token endpoint to receive an Access Token.
+In other words, it exchanges a Facebook access token (which identifies a FACEBOOK user) for one of your resource server's Access Tokens (which identifies one of YOUR users).  So, if your app has a "login with Facebook" feature, the access token returned by Facebook at the end of the Facebook auth flow can then be used to create and/or identify a user in your system.
 
 Supporting multiple grant types means that your API can be used in numerous situations while still providing a secure method for access, including in mobile apps, in front-end JavaScript, or even completely server-side.
 
