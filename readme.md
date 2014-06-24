@@ -180,6 +180,8 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
  * **OAuthRequest** - Used to bridge between bshaffer's Oauth2 Server Library's Request objects and Laravel's.
  * **OAuthResponse** - Used to bridge between bshaffer's Oauth2 Server Library's Response objects and Laravel's.
 
+All of the response objects utilize the structure defined by the api_response_array binding.
+
 ## Examples
 
 For reproducibility, all examples shown have the following assumptions:
