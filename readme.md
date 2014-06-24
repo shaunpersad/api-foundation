@@ -88,6 +88,7 @@ While technically you may override any and all methods, you should only have to 
   This is by default used by the checkUserCredentials method.  You may override this if you are using a custom Auth method.
 
 * >getUserInfoByFacebookId ($facebook_id):array
+
   Given a user's facebook id, gets the user's info (typically a database row) as an associative array with a MANDATORY user_id key.
 
 * >createFacebookUser (GraphUser $facebook_user):void
