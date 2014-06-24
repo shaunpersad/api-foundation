@@ -38,9 +38,7 @@ class OAuthClientsSeeder extends Seeder
          * or JavaScript, etc.
          */
 
-        if (!$route = route('authorize_redirect')) {
-            $route = '';
-        }
+        $route = url('login-redirect');
 
         DB::table('oauth_clients')->insert(array(
             'client_id' => "testclient",
