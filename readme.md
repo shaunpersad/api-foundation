@@ -166,7 +166,7 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
 
 ## IoC Bindings
 
- * **oauth2** - a *singleton* which is the underlying OAuth 2.0 server object made by bshaffer.
+ * **oauth2** - a *singleton* which is the underlying OAuth 2.0 server object made by bshaffer's Oauth2 Server Library: http://bshaffer.github.io/oauth2-server-php-docs/.
  * **requires_oauth_token** - a *filter* which restricts routes to requiring a valid Access Token (as the "access_token" param).
  * **authorize_request** - a *binding* which creates a request for the Authorize endpoint.  You should pass in a "validate_error_callback" and a "validate_success_callback" to this when creating.  See the implementation in the sample-routes.php file.
  * **authorize_response** - a *binding* which creates a response for a request to the Authorize endpoint.  You should pass in the "is_authorized" parameter to indicate whether or not the user authorized your app, as well as the "user_id" parameter to indicate which user (if any) committed this action.
