@@ -173,12 +173,20 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
  * **token_response** - a *binding* which creates a response for the Token endpoint.  This response will include either an Access Token, or error information.
  * **api_response_array** - a *binding* which creates the structure for every API response.  This structure can be changed by simply extending our service provider and overriding the makeAPIResponseArray method.
 
+## Helper Classes
+
+ * **SuccessResponse** - Use SucessResponse::make($object) to create a JSON response for successful API requests.  $object can be anything that would ordinarily be serializable by Laravel, such as an Eloquent Model.
+ * **ErrorResponse** - Use ErrorResponse::make($message, $status, $headers) to create a JSON response for API errors.
+ * **OAuthRequest** - Used to bridge between bshaffer's Oauth2 Server Library's Request objects and Laravel's.
+ * **OAuthResponse** - Used to bridge between bshaffer's Oauth2 Server Library's Response objects and Laravel's.
+
 ## Examples
 
 For reproducibility, all examples shown have the following assumptions:
 
  * installation of this package in a brand new project
  * you have seeded the database with the data in the included seeder
+ * you have copied all the routes from sample-routes.php into your routes
  * the base URL is "http://apitest.local"
  * the Token endpoint is a POST
  * the client secret is not used
