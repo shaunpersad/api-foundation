@@ -26,5 +26,5 @@
             "Shaunpersad\\ApiFoundation\\": "src/"
         }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
