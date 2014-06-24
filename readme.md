@@ -126,7 +126,7 @@ Please read through the comments for each route as you implement them.
 
 ## Endpoints
 
-The sample-routes.php file contains several routes which can be grouped as the following kinds of API endpoints:
+The sample-routes.php file contains several routes which can be identified as the following kinds of API endpoints:
 
 ### The Authorize endpoint
 
@@ -158,9 +158,9 @@ This is an example of an API resource.  Passing a valid access token to this rou
 ### Facebook routes
 
 There are two additional routes included to demonstrate the Facebook Access Token grant type.
-With the Facebook App ID and Secret supplied in the config file, the /get-facebook-login route will redirect you to Facebook to log in and authorize your app.
-After authorizing, Facebook will redirect you to the /facebook-login-redirect route, and display your Facebook Access Token.
-This Facebook Access Token can then be sent to the token endpoint to exchange for one of your app's access tokens.
+With the Facebook App ID and Secret supplied in the config file, the /get-facebook-login route will redirect you to Facebook to log in and authorize your Facebook app.
+After authorizing, Facebook will redirect you to the /facebook-login-redirect route, and display your Facebook access token.
+This Facebook access token can then be sent to the Token endpoint to exchange for one of your app's Access Tokens.
 
 ## IoC Bindings
 
