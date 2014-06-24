@@ -69,7 +69,7 @@ Also, if you plan to utilize Facebook integration, please set a Facebook App ID 
 
 Find the included `sample-routes.php` file: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php`
 
-In it, you will find the various routes you may wish to implement, which will be described in further detail in the "Endpoints" section.
+In it, you will find the various routes you may wish to implement, which will be described in further detail in the "Endpoints" section.  Copy these routes into your project.
 
 ### Existing Project Installation
 
