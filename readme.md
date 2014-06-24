@@ -82,7 +82,7 @@ Add the service provider to your list of providers in app/config/app.php:
 Publish the included config file, to make it available to your project for modification:
 >php artisan config:publish shaunpersad/api-foundation
 
-If you already have your own "users" table, DO NOT run the included migrations.  Instead, create your own migration, then find the included create_oauth_tables migration file and copy the code into your own migration file, then run this migration.
+If you already have your own "users" table, DO NOT run the included migrations.  Instead, create your own migration, then find the included create_oauth_tables migration file (shaunpersad/api-foundation/src/migrations/) and copy the code into your own migration file, then run this migration.
 
 This is an included database seeder which you may wish to use as a basis for your own seeder: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php
 
