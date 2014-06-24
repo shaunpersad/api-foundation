@@ -22,11 +22,12 @@ This authorization code can then be sent to your API's token endpoint to receive
 
 * **Refresh Token**:  A "refresh token" is sent back when a user is authenticated via the Authorization Code or Password grant types.  This token can then be sent back to the token endpoint for a fresh access token.
 
-* **Implicit**: This is the same as the Authorization Code grant type, except instead of the authorization code being returned when a user logs in to your system, the access token is returned directly.
+* **Implicit**: This is the same as the Authorization Code grant type, except instead of the authorization code being returned when a user logs in to your system, the access token is returned directly.  This would typically be the preferred method when using the API in front-end JavaScript.
 
 * **(Custom grant type) Facebook Access Token**: You may create your own grant types.  One such custom grant type is the Facebook Access Token grant type, which allows you to send a Facebook access token to the token endpoint to receive an access token.
 In other words, it exchanges a Facebook access token (which identifies a FACEBOOK user) for one of your app's access tokens (which identifies one of YOUR users).  So, if your app has a "login with Facebook" feature, the access token returned by Facebook at the end of their auth flow can then be used to create and/or identify a user in your system.
 
+Supporting multiple grant types means that your API can be used in numerous situations while still providing a secure method for access, including in mobile apps, in front-end JavaScript, or even completely server-side.
 
 ## Installation
 
