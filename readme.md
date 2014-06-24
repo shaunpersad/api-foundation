@@ -7,7 +7,7 @@ Additionally, it also standardizes all API responses into an easily definable fo
 ## Key Concepts
 * **Authorization**: A user must give permission for an app to access their resources on the resource server. E.g. When logging in to an app via Facebook, you are giving that app permission to access your resources on Facebook.
 * **Authorization Code**: After a successful Authorization process, an Authorization Code is returned.  This code can then be exchanged for an Access Token.
-* **Access Token**: A token presented when accessing a protected resource.  Often, this access token acts on behalf of a specific user in your system (however this does not always have to be the case).
+* **Access Token**: A token presented when accessing a protected resource.  Often, this Access Token acts on behalf of a specific user in your system (however this does not always have to be the case).
 * **Authentication**: Making a request for an Access Token.  The structure and requirements for this request are based on the Grant Types implemented by the app.
 * **Grant Type**: The Authentication method used.  ApiFoundation implements multiple Grant Types, and allows for custom Grant Types to be created.
 * **Client**: An app that is using your API.  It can be anything: a website, mobile app, or a server.  "Client" and "app" will be used interchangeably in this doc.
@@ -115,7 +115,7 @@ While technically you may override any and all methods, you should only have to 
   Creates a new user in your system based on their Facebook information.
 
 If using Facebook integration, you may also need to extend the FacebookAccessToken Grant Type if you wish to control exactly how a
-Facebook access token gets exchanged for one of your access tokens.  For example, if you do not wish to use the Facebook user's email address
+Facebook access token gets exchanged for one of your Access Tokens.  For example, if you do not wish to use the Facebook user's email address
 as their username.
 
 In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also extend the ApiFoundationServiceProvider, and override the makeOauth2() method, which creates the oauth2 singleton (see the "IoC Bindings" section).
@@ -155,7 +155,7 @@ This is the URI that you'd want the user to be redirected to after being authori
 ### Resource endpoint
 
 In the `sample-routes.php` file, this is the `/api/v1/me` route.
-This is an example of an API resource.  Passing a valid access token to this route will return that authenticated user ("me") as a resource.
+This is an example of an API resource.  Passing a valid Access Token to this route will return that authenticated user ("me") as a resource.
 
 ### Facebook routes
 
