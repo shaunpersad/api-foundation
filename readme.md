@@ -182,7 +182,7 @@ For reproducibility, all examples shown have the following assumptions:
  * the client secret is not used
  * the client id is passed in the request body (although in the headers is preferred)
 
-### Authorization Code
+### Using Authorization Code Grant Types
 
 In your browser, navigate to http://apitest.local/authorize.
 You should get an error, as the comments in the sample-routes.php file state that:
@@ -205,11 +205,11 @@ If you received an Authorization Code, you may then POST it (along with the othe
 
 e.g. (Using CocoaRestClient): https://www.dropbox.com/s/c4m86xgu94fpr1r/Screenshot%202014-06-23%2017.14.41.png
 
-### Password
+### Using the Password Grant Type
 
 POST the required credentials and other params: https://www.dropbox.com/s/h7xmd9qlz7ft9vz/Screenshot%202014-06-23%2017.18.06.png
 
-### Facebook Login
+### Using the Facebook Access Token Grant Type
 
 In your browser, navigate to http://apitest.local/get-facebook-login
 
@@ -218,9 +218,9 @@ be redirected back to http://apitest.local/facebook-login-redirect, and your Fac
 
 You may then POST it (along with the other required params) to the Token endpoint: https://www.dropbox.com/s/dzaxzva56tdcc92/Screenshot%202014-06-23%2017.23.40.png
 
-### Accessing the "me" resource
+### Accessing resources using Access Tokens
 
 POST to the "me" endpoint with a valid access token:
 
-1. the admin@local.com user: https://www.dropbox.com/s/dr48oanlpq2k9ju/Screenshot%202014-06-23%2017.27.06.png
+1. the seeded user: https://www.dropbox.com/s/dr48oanlpq2k9ju/Screenshot%202014-06-23%2017.27.06.png
 2. the facebook user: https://www.dropbox.com/s/h0t0f1e482llbu9/Screenshot%202014-06-23%2017.25.33.png
