@@ -17,8 +17,8 @@ class LaravelFacebookRedirectLoginHelper extends FacebookRedirectLoginHelper {
      */
     private $sessionPrefix = 'FBRLH_';
 
-    private $app_id;
-    private $app_secret;
+    private $appId;
+    private $appSecret;
 
     /**
      * Constructs a RedirectLoginHelper for a given appId and redirectUrl.
@@ -33,10 +33,10 @@ class LaravelFacebookRedirectLoginHelper extends FacebookRedirectLoginHelper {
     {
         if (!empty($appId)) {
 
-            $this->app_id = $appId;
+            $this->appId = $appId;
         } elseif ($appId = Config::get('api-foundation::fb_app_id')) {
 
-            $this->app_id = $appId;
+            $this->appId = $appId;
         } else {
 
             throw new \LogicException('Facebook APP ID not set.');
@@ -44,18 +44,18 @@ class LaravelFacebookRedirectLoginHelper extends FacebookRedirectLoginHelper {
 
         if (!empty($appSecret)) {
 
-            $this->app_secret = $appSecret;
+            $this->appSecret = $appSecret;
         } elseif ($appSecret = Config::get('api-foundation::fb_app_secret')) {
 
-            $this->app_secret = $appSecret;
+            $this->appSecret = $appSecret;
         } else {
 
             throw new \LogicException('Facebook APP SECRET not set.');
         }
 
-        FacebookSession::setDefaultApplication($this->app_id, $this->app_secret);
+        FacebookSession::setDefaultApplication($this->appId, $this->appSecret);
 
-        parent::__construct($redirectUrl, $this->app_id, $this->app_secret);
+        parent::__construct($redirectUrl, $this->appId, $this->appSecret);
     }
 
     /**
