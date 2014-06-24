@@ -12,19 +12,19 @@ As a high-level introduction to how OAuth 2.0 is used in ApiFoundation, essentia
 
 Those particular parameters are determined by which "grant type" you choose to use in your API.  There are several grant types to choose from:
 
-Authorization Code: this is the standard OAuth 2.0 implementation.  If you've ever used Facebook's Graph API OAuth 2.0 implementation, this is essentially that flow, where
+* **Authorization Code**: this is the standard OAuth 2.0 implementation.  If you've ever used Facebook's Graph API OAuth 2.0 implementation, this is essentially that flow, where
 a user is directed to a login screen where they can log in to your system somehow and then authorize an app.  Doing so returns an "authorization code" (which is not the same as an access token!).
 This authorization code can then be sent to your API's token endpoint to receive an access token.
 
-Password: simpler implementation, where the user's username and password are sent to the token endpoint directly to receive an access token.  This is the most convenient way to authenticate a user.
+* **Password**: simpler implementation, where the user's username and password are sent to the token endpoint directly to receive an access token.  This is the most convenient way to authenticate a user.
 
-Client Credentials:  the app's client id and secret are sent to the token endpoint to receive an access token.  This access token does not map to a user, however.  Im essence, this is the app itself using the API, with access only to the resources under the app's control (as opposed to those accessible to a user).
+* **Client Credentials**:  the app's client id and secret are sent to the token endpoint to receive an access token.  This access token does not map to a user, however.  Im essence, this is the app itself using the API, with access only to the resources under the app's control (as opposed to those accessible to a user).
 
-Refresh Token:  A "refresh token" is sent back when a user is authenticated via the Authorization Code or Password grant types.  This token can then be sent back to the token endpoint for a fresh access token.
+* **Refresh Token**:  A "refresh token" is sent back when a user is authenticated via the Authorization Code or Password grant types.  This token can then be sent back to the token endpoint for a fresh access token.
 
-Implicit: This is the same as the Authorization Code grant type, except instead of the authorization code being returned when a user logs in to your system, the access token is returned directly.
+* **Implicit**: This is the same as the Authorization Code grant type, except instead of the authorization code being returned when a user logs in to your system, the access token is returned directly.
 
-(Custom grant type) Facebook Access Token: You may create your own grant types.  One such custom grant type is the Facebook Access Token grant type, which allows you to send a Facebook access token to the token endpoint to receive an access token.
+* **(Custom grant type) Facebook Access Token**: You may create your own grant types.  One such custom grant type is the Facebook Access Token grant type, which allows you to send a Facebook access token to the token endpoint to receive an access token.
 In other words, it exchanges a Facebook access token (which identifies a FACEBOOK user) for one of your app's access tokens (which identifies one of YOUR users).  So, if your app has a "login with Facebook" feature, the access token returned by Facebook at the end of their auth flow can then be used to create and/or identify a user in your system.
 
 
@@ -38,9 +38,11 @@ Install via composer.
 
 Add the service provider to your list of providers in app/config/app.php: 'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
 
-Publish the included config file, to make it available to your project for modification: php artisan config:publish shaunpersad/api-foundation
+Publish the included config file, to make it available to your project for modification:
+>php artisan config:publish shaunpersad/api-foundation
 
-Run the included migrations (Note: this will create a "users" table): php artisan migrate --package="shaunpersad/api-foundation"
+Run the included migrations (Note: this will create a "users" table):
+>php artisan migrate --package="shaunpersad/api-foundation"
 
 This is an included database seeder which you may wish to use as a basis for your own seeder: shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/Database/OAuthSeeder.php
 
@@ -58,7 +60,8 @@ Install via composer.
 
 Add the service provider to your list of providers in app/config/app.php: 'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
 
-Publish the included config file, to make it available to your project for modification: php artisan config:publish shaunpersad/api-foundation
+Publish the included config file, to make it available to your project for modification:
+>php artisan config:publish shaunpersad/api-foundation
 
 If you already have your own "users" table, DO NOT run the included migrations.  Instead, create your own migration, then find the included create_oauth_tables migration file and copy the code into your own migration file, then run this migration.
 
@@ -72,20 +75,24 @@ Also, if you plan to utilize Facebook integration, please set a Facebook App ID 
 Next, you may need to extend the class that controls how ApiFoundation interacts with your database: ModelStorage.
 While technically you may override any and all methods, you should only have to override a select few to suit your needs:
 
-checkUserCredentials ($username, $password):bool
-This accepts the user's username and raw password, and then checks that the password is valid.
+* >checkUserCredentials ($username, $password):bool
 
-getUserInfoByUsername ($username):array
-Given a user's username, gets the user's info (typically a database row) as an associative array with a MANDATORY user_id key.
+  This accepts the user's username and raw password, and then checks that the password is valid.
 
-checkPassword ($username, $password):bool
-This is by default used by the checkUserCredentials method.  You may override this if you are using a custom Auth method.
+* >getUserInfoByUsername ($username):array
 
-getUserInfoByFacebookId ($facebook_id):array
-Given a user's facebook id, gets the user's info (typically a database row) as an associative array with a MANDATORY user_id key.
+  Given a user's username, gets the user's info (typically a database row) as an associative array with a MANDATORY user_id key.
 
-createFacebookUser (GraphUser $facebook_user):void
-Creates a new user based on their facebook information.
+* >checkPassword ($username, $password):bool
+
+  This is by default used by the checkUserCredentials method.  You may override this if you are using a custom Auth method.
+
+* >getUserInfoByFacebookId ($facebook_id):array
+  Given a user's facebook id, gets the user's info (typically a database row) as an associative array with a MANDATORY user_id key.
+
+* >createFacebookUser (GraphUser $facebook_user):void
+
+  Creates a new user based on their facebook information.
 
 If using Facebook integration, you may also need to extend the FacebookAccessToken grant type if you wish to control exactly how a
 Facebook access token gets exchanged for one of your access tokens.  For example, if you do not wish to use the Facebook user's email address
@@ -101,10 +108,10 @@ Please read through the comments for each route as you implement them.
 
 The sample-routes.php file contains several routes which can be grouped as the following kinds of API endpoints:
 
-"authorize" endpoint
-"token" endpoint
-"redirect" endpoint
-"resource" endpoint
+* "authorize" endpoint
+* "token" endpoint
+* "redirect" endpoint
+* "resource" endpoint
 
 ### The Authorize endpoint
 
