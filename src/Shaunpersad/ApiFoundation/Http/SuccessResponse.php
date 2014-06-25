@@ -6,7 +6,7 @@ use Response;
 
 class SuccessResponse {
 
-    public static function make($object) {
+    public static function make($object, $status = 200, array $headers = array(), $options = 0 ) {
 
         $response = App::make(
             'api_response_array',
@@ -15,6 +15,6 @@ class SuccessResponse {
             )
         );
 
-        return Response::json($response, 200);
+        return Response::json($response, $status, $headers, $options);
     }
 } 
