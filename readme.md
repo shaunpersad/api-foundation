@@ -165,7 +165,7 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
 
     Of this list, the Grant Types you wish to support may be defined in the config file.  To add additional Grant Types,
     you will need to extend the ApiFoundationServiceProvider and override the `getAllGrantTypes()` method.
-* `client_secret` - optional.  Should only be present if your app uses one.  Apps should not use Client Secrets if it can be exposed publicly.  If present, it must be either in the body of the request or in the Authorize HTTP Header (Http Basic).
+* `client_secret` - should only be present if your app uses one.  Apps should not use Client Secrets if it can be exposed publicly.  If a Client Secret is used, it must be present and must be either in the body of the request or in the Authorize HTTP Header (Http Basic).
 
 ### The Redirect endpoint
 
