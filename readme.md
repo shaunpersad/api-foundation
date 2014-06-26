@@ -1,6 +1,6 @@
 ## Introduction
 
-This is a package for Laravel 4 that provides a basis for creating APIs.  Particularly, it allows for OAuth 2.0 implementation using any grant type your application requires, including custom grant types.
+This is a package for Laravel 4 that provides a basis for creating APIs.  Particularly, it allows for OAuth 2.0 implementation using any Grant Type your application requires, including custom Grant Types.
 
 Additionally, it also standardizes all API responses into an easily definable format.
 
