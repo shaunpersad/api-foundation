@@ -146,10 +146,10 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
 #####Required Parameters
 
 * `client_id` - must be present either in the body of the request or in the Authorize HTTP Header (Http Basic).
-* `grant_type` - must be present in the bosy of the request, and set to one of your Grant Types.
+* `grant_type` - must be present in the body of the request, and set to one of your Grant Types.
 
-    The value of this param maps to one of the above described Grant Types via the `getAllGrantTypes()` method in the ApiFoundationServiceProvider.
-    The default mapping is as follows, where the key is what you'd use in `grant_type`:
+    The value of this param maps to one of the described Grant Types via the `getAllGrantTypes()` method in the ApiFoundationServiceProvider.
+    The default mapping is as follows, where the key is what you'd use as the `grant_type` value:
     ```
         public function getAllGrantTypes() {
 
