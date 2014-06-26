@@ -11,6 +11,13 @@ return array(
     'jwt_table'  => 'oauth_jwt',
     'scope_table'  => 'oauth_scopes',
     'public_key_table'  => 'oauth_public_keys',
-    'fb_app_id' => '643460432405337',
-    'fb_app_secret' => '8f7c23ced13fa00a943d6a0dc627f78b'
+    'supported_grant_types' => array(
+        'authorization_code',
+        'password',
+        'client_credentials',
+        'refresh_token',
+        'fb_access_token'
+    ),
+    'fb_app_id' => null,
+    'fb_app_secret' => null
 );

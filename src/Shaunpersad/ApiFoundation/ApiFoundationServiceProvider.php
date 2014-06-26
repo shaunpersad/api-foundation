@@ -3,10 +3,6 @@
 use App;
 use Auth;
 use Illuminate\Support\ServiceProvider;
-use OAuth2\GrantType\AuthorizationCode;
-use OAuth2\GrantType\ClientCredentials;
-use OAuth2\GrantType\RefreshToken;
-use OAuth2\GrantType\UserCredentials;
 use OAuth2\Server;
 use Request;
 use Route;
@@ -14,7 +10,6 @@ use Shaunpersad\ApiFoundation\Http\ErrorResponse;
 use Shaunpersad\ApiFoundation\Http\OAuthRequest;
 use Shaunpersad\ApiFoundation\Http\OAuthResponse;
 use Shaunpersad\ApiFoundation\Http\SuccessResponse;
-use Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken;
 use Shaunpersad\ApiFoundation\OAuth2\Storage\ModelStorage;
 use User;
 
@@ -64,6 +59,17 @@ class ApiFoundationServiceProvider extends ServiceProvider {
 	}
 
 
+    public function getAllGrantTypes() {
+
+        return array(
+            'authorization_code' => '\OAuth2\GrantType\AuthorizationCode',
+            'password' => '\OAuth2\GrantType\UserCredentials',
+            'client_credentials' => '\OAuth2\GrantType\ClientCredentials',
+            'refresh_token' => '\OAuth2\GrantType\RefreshToken',
+            'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
+        );
+    }
+
     /**
      * Creates an instance of the oauth2 server to handle all things oauth-related.
      */
@@ -90,12 +96,18 @@ class ApiFoundationServiceProvider extends ServiceProvider {
 
             $server = new Server($storage, $config);
 
-            $server->addGrantType(new ClientCredentials($storage, $config));
-            $server->addGrantType(new UserCredentials($storage, $config));
-            $server->addGrantType(new AuthorizationCode($storage, $config));
-            $server->addGrantType(new RefreshToken($storage, $config));
-            $server->addGrantType(new FacebookAccessToken($storage, $config));
+            $all_grant_types = $this->getAllGrantTypes();
 
+            $supported_grant_types = \Config::get('api-foundation::supported_grant_types');
+
+            foreach ($supported_grant_types as $grant_type) {
+
+                if (array_key_exists($grant_type, $all_grant_types)) {
+
+                    $grant_type_class = $all_grant_types[$grant_type];
+                    $server->addGrantType(new $grant_type_class($storage, $config));
+                }
+            }
             return $server;
         });
     }
