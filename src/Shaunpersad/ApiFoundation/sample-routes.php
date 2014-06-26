@@ -19,7 +19,8 @@ Route::get('/', function()
  * Will redirect you to Facebook to log in to the app.
  *
  * In, for example, a mobile app, this route would be useless, as the mobile app itself
- * would be required to redirect the user to Facebook (usually via the Facebook SDK) *
+ * would be required to redirect the user to Facebook (usually via the Facebook SDK)
+ *
  */
 Route::get('get-facebook-login', function(){
 
@@ -94,8 +95,8 @@ Route::get('login-redirect', array('as' => 'authorize_redirect', function() {
  * 'validate_error_callback' handles what to do if there is an error, e.g. forgetting
  * any of the above required URL query parameters.
  *
- * APIOAuthRequest is an extension of Symfony's Request object,
- * while APIOAuthResposne is an extension of Symfony's JsonResponse object.
+ * OAuthRequest is an extension of Symfony's Request object,
+ * while OAuthResponse is an extension of Symfony's JsonResponse object.
  */
 Route::get('authorize', array('as'=> 'authorize_request', function()
 {
