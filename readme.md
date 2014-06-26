@@ -191,18 +191,19 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
     This is used internally in the ApiFoundationServiceProvider, so you generally should not need to interact with this.
 
  * **requires_oauth_token** - a *filter* which restricts routes to requiring a valid Access Token (as the "access_token" param).
+    See the usage in the `sample-routes.php` file.
 
  * **authorize_request** - a *binding* which creates a request for the Authorize endpoint.
     You should pass in a "validate_error_callback" and a "validate_success_callback" to this when creating.
-    This binding will likely only be used once.  See the implementation in the `sample-routes.php` file.
+    This binding will likely only be used once.  See the usage in the `sample-routes.php` file.
 
  * **authorize_response** - a *binding* which creates a response for a request to the Authorize endpoint.
     You should pass in the "is_authorized" parameter to indicate whether or not the user authorized your app, as well as the "user_id" parameter to indicate which user (if any) committed this action.
-    This binding will likely only be used once.  See the implementation in the `sample-routes.php` file.
+    This binding will likely only be used once.  See the usage in the `sample-routes.php` file.
 
  * **token_response** - a *binding* which creates a response for the Token endpoint.
     This response will include either an Access Token, or error information.
-    This binding will likely only be used once.  See the implementation in the `sample-routes.php` file.
+    This binding will likely only be used once.  See the usage in the `sample-routes.php` file.
 
  * **api_response_array** - a *binding* which creates the structure for every API response.
     This structure can be changed by simply extending our service provider and overriding the makeAPIResponseArray method.
