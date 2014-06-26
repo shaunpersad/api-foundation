@@ -142,10 +142,32 @@ If the user is redirected to the "redirect_uri", that URI should also contain ei
 
 In the `sample-routes.php` file, this is the `/api/v1/get-token` route.
 This is the endpoint that, based on whichever Grant Type you are using, particular parameters are sent and an Access Token is received.
-All requests to this endpoint must have a 'client_id' param, either as a query param, or in the Authorize HTTP Header (Http Basic).
-'client_secret' should only be present if your app uses one.  Apps should not use client secrets if the
-secrecy of the secret cannot be guaranteed.  If your app does use one, supply it either as a query param
-or in the Authorize HTTP Header (Http Basic).
+
+#####Required Parameters
+
+* `client_id` - must be present either in the body of the request or in the Authorize HTTP Header (Http Basic).
+
+* `grant_type` - must be present in the bosy of the request, and set to one of your Grant Types.
+
+    The value of this param maps to one of the above described Grant Types via the `getAllGrantTypes()` method in the ApiFoundationServiceProvider.
+    The default mapping is:
+    ```
+        public function getAllGrantTypes() {
+
+            return array(
+                'authorization_code' => '\OAuth2\GrantType\AuthorizationCode',
+                'password' => '\OAuth2\GrantType\UserCredentials',
+                'client_credentials' => '\OAuth2\GrantType\ClientCredentials',
+                'refresh_token' => '\OAuth2\GrantType\RefreshToken',
+                'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
+            );
+        }
+    ```
+
+    Of this list, the Grant Types you wish to support may be defined in the config file.  To add additional Grant Types,
+    you will need to extend the ApiFoundationServiceProvider and override the `getAllGrantTypes()` method.
+
+* `client_secret` - optional.  Should only be present if your app uses one.  Apps should not use Client Secrets if it can be exposed publicly.  If present, it must be either in the body of the request or in the Authorize HTTP Header (Http Basic).
 
 ### The Redirect endpoint
 
