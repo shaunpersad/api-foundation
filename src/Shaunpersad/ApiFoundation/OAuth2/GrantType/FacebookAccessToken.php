@@ -13,7 +13,7 @@ use OAuth2\GrantType\GrantTypeInterface;
 use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
 use OAuth2\ResponseType\AccessTokenInterface;
-use Shaunpersad\ApiFoundation\OAuth2\Storage\ModelStorage;
+use Shaunpersad\ApiFoundation\Interfaces\FacebookAccessTokenInterface;
 
 class FacebookAccessToken implements GrantTypeInterface {
 
@@ -23,10 +23,10 @@ class FacebookAccessToken implements GrantTypeInterface {
     protected $storage;
 
     /**
-     * @param ModelStorage $storage
+     * @param FacebookAccessTokenInterface $storage
      * REQUIRED Storage class for retrieving user credentials information
      */
-    public function __construct(ModelStorage $storage)
+    public function __construct(FacebookAccessTokenInterface $storage)
     {
         $this->storage = $storage;
     }
@@ -62,9 +62,21 @@ class FacebookAccessToken implements GrantTypeInterface {
 
         FacebookSession::setDefaultApplication($fb_app_id, $fb_app_secret);
 
-        $session = new FacebookSession($request->request($identifier));
+        try {
+            $session = new FacebookSession($request->request($identifier));
 
-        if($session) {
+        } catch(FacebookRequestException $e) {
+
+            $response->setError(401, 'invalid_grant', $e->getMessage());
+            return null;
+
+        } catch(\Exception $e) {
+
+            $response->setError(401, 'invalid_grant', $e->getMessage());
+            return null;
+        }
+
+        if(!empty($session)) {
 
             try {
 
