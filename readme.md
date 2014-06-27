@@ -213,7 +213,7 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
 
 ## Helper Classes
 
- * **SuccessResponse** - Use SucessResponse::make($object) to create a JSON response for successful API requests.  $object can be anything that would ordinarily be serializable by Laravel, such as an Eloquent Model.
+ * **SuccessResponse** - Use SuccessResponse::make($object) to create a JSON response for successful API requests.  $object can be anything that would ordinarily be serializable by Laravel, such as an Eloquent Model.
  * **ErrorResponse** - Use ErrorResponse::make($message, $status, $headers) to create a JSON response for API errors.
  * **OAuthRequest** - Used to bridge between bshaffer's Oauth2 Server Library's Request objects and Laravel's.
  * **OAuthResponse** - Used to bridge between bshaffer's Oauth2 Server Library's Response objects and Laravel's.
