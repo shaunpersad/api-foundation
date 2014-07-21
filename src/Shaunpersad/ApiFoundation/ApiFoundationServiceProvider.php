@@ -73,7 +73,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
     /**
      * Creates an instance of the oauth2 server to handle all things oauth-related.
      */
-    private function makeOauth2() {
+    protected function makeOauth2() {
 
         $this->app->singleton('oauth2', function() {
 
@@ -115,7 +115,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
     /**
      * Allows access only if a valid access token (access_token) is supplied.
      */
-    private function makeRouteFilter() {
+    protected function makeRouteFilter() {
 
         Route::filter('requires_oauth_token', function()
         {
@@ -193,7 +193,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
      * This will typically either show a form for the user to log in and authorize|deauthorize,
      * or show the error.
      */
-    private function makeAuthorizeRequest() {
+    protected function makeAuthorizeRequest() {
 
         $this->app->bind('authorize_request', function($app, $parameters = array()) {
 
@@ -229,7 +229,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
      * along with either the code or access_token, depending if
      * the grant type is explicit or implicit
      */
-    private function makeAuthorizeResponse() {
+    protected function makeAuthorizeResponse() {
 
         $this->app->bind('authorize_response', function($app, $parameters = array()) {
 
@@ -252,7 +252,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
     /**
      * Respond with access_token data.
      */
-    private function makeTokenResponse() {
+    protected function makeTokenResponse() {
 
         $this->app->bind('token_response', function() {
 
@@ -277,7 +277,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
     /**
      * Standardizes all of the API's responses with this format.
      */
-    private function makeAPIResponseArray() {
+    protected function makeAPIResponseArray() {
 
 
         $this->app->bind('api_response_array', function($app, $parameters = array()) {
