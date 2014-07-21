@@ -48,7 +48,7 @@ You may use ApiFoundation with new projects or existing, however existing projec
 ### New Project Installation
 
 Install via composer.
->require: "shaunpersad/api-foundation": "0.1.3"
+>require: "shaunpersad/api-foundation": "0.1.4"
 
 Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
@@ -74,7 +74,7 @@ In it, you will find the various routes you may wish to implement, which will be
 ### Existing Project Installation
 
 Install via composer.
->require: "shaunpersad/api-foundation": "0.1.3"
+>require: "shaunpersad/api-foundation": "0.1.4"
 
 Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
