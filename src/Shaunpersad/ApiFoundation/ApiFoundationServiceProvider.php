@@ -39,7 +39,8 @@ class ApiFoundationServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+		$this->makeAllGrantTypes();
+        $this->makeStorage();
         $this->makeOauth2();
         $this->makeRouteFilter();
         $this->makeAuthorizeRequest();
@@ -58,16 +59,27 @@ class ApiFoundationServiceProvider extends ServiceProvider {
 		return array();
 	}
 
+    public function makeStorage() {
 
-    public function getAllGrantTypes() {
+        $this->app->singleton('oauth2_storage', function() {
 
-        return array(
-            'authorization_code' => '\OAuth2\GrantType\AuthorizationCode',
-            'password' => '\OAuth2\GrantType\UserCredentials',
-            'client_credentials' => '\OAuth2\GrantType\ClientCredentials',
-            'refresh_token' => '\OAuth2\GrantType\RefreshToken',
-            'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
-        );
+           return new ModelStorage();
+        });
+    }
+
+    public function makeAllGrantTypes() {
+
+        $this->app->singleton('oauth2_grant_types', function() {
+
+            return array(
+                'authorization_code' => '\OAuth2\GrantType\AuthorizationCode',
+                'password' => '\OAuth2\GrantType\UserCredentials',
+                'client_credentials' => '\OAuth2\GrantType\ClientCredentials',
+                'refresh_token' => '\OAuth2\GrantType\RefreshToken',
+                'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
+            );
+        });
+
     }
 
     /**
@@ -80,7 +92,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
             /*
              * Custom storage for application
              */
-            $storage = new ModelStorage();
+            $storage = App::make('oauth2_storage');
 
             $refresh_token_lifetime = strtotime('+2 years') - time();
             $access_lifetime = strtotime('+1 year') - time();
@@ -96,7 +108,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
 
             $server = new Server($storage, $config);
 
-            $all_grant_types = $this->getAllGrantTypes();
+            $all_grant_types = App::make('oauth2_grant_types');
 
             $supported_grant_types = \Config::get('api-foundation::supported_grant_types');
 
