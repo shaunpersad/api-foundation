@@ -118,7 +118,7 @@ If using Facebook integration, you may also need to extend the FacebookAccessTok
 Facebook access token gets exchanged for one of your Access Tokens.  For example, if you do not wish to use the Facebook user's email address
 as their username.
 
-In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also override the relevant IoC bindings, which may include "oauth2", "oauth2_grant_types", and/or "oauth2_storage" (see the "IoC Bindings" section).
+In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also override the relevant IoC bindings, which may include `oauth2`, `oauth2_grant_types`, and/or `oauth2_storage` (see the "IoC Bindings" section).
 
 Find the included `sample-routes.php` file: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php`
 
