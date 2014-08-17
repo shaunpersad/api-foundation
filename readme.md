@@ -151,8 +151,6 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
     The value of this param maps to one of the described Grant Types via the `oauth2_grant_types` IoC binding in the ApiFoundationServiceProvider.
     The default mapping is as follows, where the key is what you'd use as the `grant_type` value:
     ```
-        public function getAllGrantTypes() {
-
             return array(
                 'authorization_code' => '\OAuth2\GrantType\AuthorizationCode',
                 'password' => '\OAuth2\GrantType\UserCredentials',
@@ -160,7 +158,6 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
                 'refresh_token' => '\OAuth2\GrantType\RefreshToken',
                 'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
             );
-        }
     ```
 
     Of this list, the Grant Types you wish to support may be defined in the config file.  To add additional Grant Types,
