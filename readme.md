@@ -48,7 +48,7 @@ You may use ApiFoundation with new projects or existing, however existing projec
 ### New Project Installation
 
 Install via composer.
->require: "shaunpersad/api-foundation": "0.1.4"
+>require: "shaunpersad/api-foundation": "0.1.5"
 
 Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
@@ -74,7 +74,7 @@ In it, you will find the various routes you may wish to implement, which will be
 ### Existing Project Installation
 
 Install via composer.
->require: "shaunpersad/api-foundation": "0.1.4"
+>require: "shaunpersad/api-foundation": "0.1.5"
 
 Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
@@ -118,7 +118,7 @@ If using Facebook integration, you may also need to extend the FacebookAccessTok
 Facebook access token gets exchanged for one of your Access Tokens.  For example, if you do not wish to use the Facebook user's email address
 as their username.
 
-In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also extend the ApiFoundationServiceProvider, and override the makeOauth2() method, which creates the oauth2 singleton (see the "IoC Bindings" section).
+In order to use your extended ModelStorage and/or FacebookAccessToken classes, you must also override the relevant IoC bindings, which may include "oauth2", "oauth2_grant_types", and/or "oauth2_storage" (see the "IoC Bindings" section).
 
 Find the included `sample-routes.php` file: `shaunpersad/api-foundation/src/Shaunpersad/ApiFoundation/sample-routes.php`
 
@@ -148,7 +148,7 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
 * `client_id` - must be present either in the body of the request or in the Authorize HTTP Header (Http Basic).
 * `grant_type` - must be present in the body of the request, and set to one of your Grant Types.
 
-    The value of this param maps to one of the described Grant Types via the `getAllGrantTypes()` method in the ApiFoundationServiceProvider.
+    The value of this param maps to one of the described Grant Types via the `oauth2_grant_types` IoC binding in the ApiFoundationServiceProvider.
     The default mapping is as follows, where the key is what you'd use as the `grant_type` value:
     ```
         public function getAllGrantTypes() {
@@ -164,7 +164,7 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
     ```
 
     Of this list, the Grant Types you wish to support may be defined in the config file.  To add additional Grant Types,
-    you will need to extend the ApiFoundationServiceProvider and override the `getAllGrantTypes()` method.
+    you will need to override the `oauth2_grant_types` binding by defining your own binding with the same key.
 * `client_secret` - should only be present if your app uses one.  Apps should not use Client Secrets if it can be exposed publicly.  If a Client Secret is used, it must be present and must be either in the body of the request or in the Authorize HTTP Header (Http Basic).
 
 ### The Redirect endpoint
@@ -187,8 +187,13 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
 ## IoC Bindings
 
  * **oauth2** - a *singleton* which is the underlying OAuth 2.0 server object made by bshaffer's Oauth2 Server Library: http://bshaffer.github.io/oauth2-server-php-docs/.
-
     This is used internally in the ApiFoundationServiceProvider, so you generally should not need to interact with this.
+
+ * **oauth2_grant_types** - a *singleton* which creates an associative array mapping of `grant_type` to classes that implement that grant_type.
+    You must override this binding with your own if you wish to use your own custom grant types.
+
+ * **oauth2_storage** - a *singleton* which creates an object to handle interaction with the database.
+    You must override this binding with your own if you wish to use your own custom storage.
 
  * **requires_oauth_token** - a *filter* which restricts routes to requiring a valid Access Token (as the "access_token" param).
     See the usage in the `sample-routes.php` file.
