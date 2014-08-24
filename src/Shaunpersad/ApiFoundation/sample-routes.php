@@ -2,6 +2,7 @@
 
 use Facebook\FacebookRequestException;
 use Shaunpersad\ApiFoundation\Facebook\HttpClients\LaravelFacebookRedirectLoginHelper;
+use Shaunpersad\ApiFoundation\GPlus\LaravelGPlusRedirectLoginHelper;
 use Shaunpersad\ApiFoundation\Http\ErrorResponse;
 use Shaunpersad\ApiFoundation\Http\OAuthRequest;
 use Shaunpersad\ApiFoundation\Http\OAuthResponse;
@@ -9,9 +10,80 @@ use Shaunpersad\ApiFoundation\Http\SuccessResponse;
 
 Route::pattern('id', '[0-9]+');
 
-Route::get('/', function()
-{
-    return View::make('hello');
+/**
+ * TEST URL.
+ * Will redirect you to Google+ to log in to the app.
+ * This is an example of the server-side-flow: https://developers.google.com/+/web/signin/server-side-flow
+ *
+ * In, for example, a mobile app, this route would be useless, as the mobile app itself
+ * would be required to redirect the user to Google (usually via the Google+ SDK)
+ */
+Route::get('get-gplus-login', function() {
+
+    $helper = new LaravelGPlusRedirectLoginHelper($_ENV['url'].'/gplus-login-redirect');
+    $loginUrl = $helper->getLoginUrl(array('https://www.googleapis.com/auth/plus.login','email'));
+
+    return Redirect::to($loginUrl);
+});
+
+/**
+ * TEST URL.
+ * This presents you with a page that has a Google+ login button.
+ * This is an example of the redirect-uri-flow: https://developers.google.com/+/web/signin/redirect-uri-flow.
+ * If you wish to make use of this example, please publish the package's views with:
+ * php artisan view:publish shaunpersad/api-foundation
+ *
+ * In, for example, a mobile app, this route would be useless, as the mobile app itself
+ * would be required to redirect the user to Google (usually via the Google+ SDK)
+ */
+Route::get('gplus-login-js', function() {
+
+    $client_id = \Config::get('api-foundation::gplus_client_id');
+
+    return View::make('gplus-login', array('gplus_client_id' => $client_id));
+});
+
+
+/**
+ * TEST URL.
+ * Will process the Google+ login and spit out Google access token data.
+ * You can then pass this Google Access Token to the get-token endpoint,
+ * to exchange it for one of our access tokens.
+ *
+ * Note that there are two flows supported: redirect-uri-flow - https://developers.google.com/+/web/signin/redirect-uri-flow
+ * and server-side-flow - https://developers.google.com/+/web/signin/server-side-flow
+ *
+ * redirect-uri-flow is assumed unless a gplus_flow parameter is set.
+ * You can test out the redirect-uri-flow via the /gplus-login-js route.
+ * You can test out the server-side-flow via the /get-gplus-login route.
+ *
+ *
+ * In, for example, a mobile app, this route would be useless, as the mobile app itself
+ * would be required to get the Google+ access token (usually via the Google+ SDK)
+ */
+Route::any('gplus-login-redirect', function() {
+
+
+    $redirect_url = null;
+
+    $flow = Input::get('gplus_flow', 'redirect-uri-flow');
+
+    if ($flow == 'redirect-uri-flow') {
+
+        $redirect_url = $_ENV['url'].'/gplus-login-redirect';
+    }
+
+    $helper = new LaravelGPlusRedirectLoginHelper($redirect_url);
+
+    $client = $helper->getClientFromRedirect();
+
+    if (!empty($client)) {
+        // Logged in
+        return 'access_token: '. $client->getAccessToken();
+    }
+
+    //return Input::all();
+
 });
 
 /**
@@ -20,7 +92,6 @@ Route::get('/', function()
  *
  * In, for example, a mobile app, this route would be useless, as the mobile app itself
  * would be required to redirect the user to Facebook (usually via the Facebook SDK)
- *
  */
 Route::get('get-facebook-login', function(){
 
@@ -29,6 +100,8 @@ Route::get('get-facebook-login', function(){
 
     return Redirect::to($loginUrl);
 });
+
+
 
 /**
  * TEST URL.
@@ -95,8 +168,8 @@ Route::get('login-redirect', array('as' => 'authorize_redirect', function() {
  * 'validate_error_callback' handles what to do if there is an error, e.g. forgetting
  * any of the above required URL query parameters.
  *
- * OAuthRequest is an extension of Symfony's Request object,
- * while OAuthResponse is an extension of Symfony's JsonResponse object.
+ * APIOAuthRequest is an extension of Symfony's Request object,
+ * while APIOAuthResposne is an extension of Symfony's JsonResponse object.
  */
 Route::get('authorize', array('as'=> 'authorize_request', function()
 {
@@ -200,27 +273,24 @@ Route::group(array('prefix' => 'api'), function()
          * while the 'refresh_token' method will be used to renew access tokens if the user is still logged in on the app.
          * 'authorization_code' is the typical three-legged OAuth2.0 approach, but it's a bit much for most applications.
          *
+         *
          * Must POST to the 'get-token' endpoint to receive a token.
          * Must have the 'grant_type' param as part of the POST data.
-         * 'grant_type' can be 'authorization_code', 'password', 'client_credentials', 'fb_access_token', or 'refresh_token' to this endpoint.
-         *
-         * 'client_id' must always be present, either as a POST param, or in the Authorize HTTP Header (Http Basic).
-         * 'client_secret' should only be present if your app uses one.  Apps should not use client secrets if the
-         * secrecy of the secret cannot be guaranteed.  If your app does use one, supply it either as a POST param
-         * or in the Authorize HTTP Header (Http Basic).
+         * 'grant_type' can be 'authorization_code', 'password', 'client_credentials', or 'refresh_token' to this endpoint.
          *
          * if 'grant_type' = 'authorization_code' and you have an authorization code (from the 'authorize' endpoint)
          * the 'code' param must also be present in the POST data,
          * set to the code sent by the 'authorize' endpoint.
-         * The 'redirect_uri' param must also be present in the POST data,
-         * set to the same redirect_uri used to authorize the app.
          *
-         * if 'grant_type' = 'password', the 'username', and 'password' params must also be present.
+         * if 'grant_type' = 'password', the 'username', and 'password' params must also be present,
+         * along with the 'client_id' and 'client_secret' (if available) params in the POST data,
+         * or in the Authorize HTTP Header (Http Basic).
+         * 'username' = user's email address.
          *
          * if 'grant_type' = 'fb_access_token', the 'fb_access_token' param must also be present in the POST data,
          * set to a Facebook access token received from Facebook.
          *
-         * if 'grant_type' = 'client_credentials', the only required params are
+         * if 'grant_type' = 'client_credentials', the only other required params are
          * the 'client_id' and 'client_secret' (if available) params in the POST data,
          * or in the Authorize HTTP Header (Http Basic).  Note: there is no User associated with tokens
          * generated by this grant type.

@@ -18,7 +18,7 @@ use Shaunpersad\ApiFoundation\Interfaces\FacebookAccessTokenInterface;
 class FacebookAccessToken implements GrantTypeInterface {
 
 
-    private $userInfo;
+    protected $userInfo;
 
     protected $storage;
 
@@ -117,13 +117,13 @@ class FacebookAccessToken implements GrantTypeInterface {
 
 
         if (empty($userInfo)) {
-            $response->setError(400, 'invalid_grant', 'Unable to retrieve user information');
+            $response->setError(400, 'invalid_grant', 'Unable to retrieve user information.');
 
             return null;
         }
 
         if (!isset($userInfo['user_id'])) {
-            throw new \LogicException("you must set the user_id on the array returned by getFacebookUser");
+            throw new \LogicException("You must set the user_id on the array.");
         }
 
         $this->userInfo = $userInfo;

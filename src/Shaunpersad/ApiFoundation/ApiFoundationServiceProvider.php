@@ -2,6 +2,7 @@
 
 use App;
 use Auth;
+use Google_Client;
 use Illuminate\Support\ServiceProvider;
 use OAuth2\Server;
 use Request;
@@ -42,6 +43,7 @@ class ApiFoundationServiceProvider extends ServiceProvider {
 		$this->makeAllGrantTypes();
         $this->makeStorage();
         $this->makeOauth2();
+        $this->makeGoogleClient();
         $this->makeRouteFilter();
         $this->makeAuthorizeRequest();
         $this->makeAuthorizeResponse();
@@ -76,7 +78,9 @@ class ApiFoundationServiceProvider extends ServiceProvider {
                 'password' => '\OAuth2\GrantType\UserCredentials',
                 'client_credentials' => '\OAuth2\GrantType\ClientCredentials',
                 'refresh_token' => '\OAuth2\GrantType\RefreshToken',
-                'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
+                'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken',
+                'gplus_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\GPlusAccessToken',
+                'gplus_server_code' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\GPlusServerCode',
             );
         });
 
@@ -121,6 +125,23 @@ class ApiFoundationServiceProvider extends ServiceProvider {
                 }
             }
             return $server;
+        });
+    }
+
+    protected function makeGoogleClient() {
+
+        $this->app->singleton('google_client', function() {
+
+            $application_name = \Config::get('api-foundation::gplus_application_name');
+            $client_id = \Config::get('api-foundation::gplus_client_id');
+            $client_secret = \Config::get('api-foundation::gplus_client_secret');
+
+            $client = new Google_Client();
+            $client->setApplicationName($application_name);
+            $client->setClientId($client_id);
+            $client->setClientSecret($client_secret);
+
+            return $client;
         });
     }
 

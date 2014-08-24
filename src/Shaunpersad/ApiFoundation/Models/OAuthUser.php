@@ -6,6 +6,7 @@ class OAuthUser extends \Eloquent {
 
     const LOGIN_TYPE_NORMAL = 'normal';
     const LOGIN_TYPE_FACEBOOK = 'facebook';
+    const LOGIN_TYPE_GPLUS = 'gplus';
 
     public function __construct(array $attributes = array()) {
 

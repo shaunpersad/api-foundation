@@ -1,3 +1,24 @@
+## 0.1.6 Notes
+
+Version 0.1.6 adds support for signing in with Google+.  Note, however, that you do not need to be an actual Google+ user to
+sign in using Google+.  You simply need a Google account of any kind.  There are two supported ways to implement this in your app:
+the recommended hybrid server-side flow using a server code: https://developers.google.com/+/web/signin/server-side-flow and
+the pure server-side flow: https://developers.google.com/+/web/signin/redirect-uri-flow.
+
+The hybrid server-side flow is supported in Api Foundation via the gplus_server_code Grant Type, where you must pass a
+gplus_server_code parameter which is the "one-time authorization code" specified in Google's documentation.
+
+The pure server-side flow corresponds to the gplus_access_token Grant Type, where you must pass a gplus_access_token parameter
+which is an access_token gotten by any other means from Google.
+
+---
+
+This version also adds further flexibility by adding in new config options to specify database field names specific to your app.
+
+Note: if you are upgrading from a previous version of this package, please add a field in your users table that will be used as the
+Google+ user id.  If you are using our original migrations, you can simply run >php artisan migrate --package="shaunpersad/api-foundation"
+to add in the field automatically.
+
 ## Introduction
 
 This is a package for Laravel 4 that provides a basis for creating APIs.  Particularly, it allows for OAuth 2.0 implementation using any Grant Type your application requires, including custom Grant Types.
@@ -48,7 +69,7 @@ You may use ApiFoundation with new projects or existing, however existing projec
 ### New Project Installation
 
 Install via composer.
->require: "shaunpersad/api-foundation": "0.1.5"
+>require: "shaunpersad/api-foundation": "0.1.6"
 
 Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
@@ -74,7 +95,7 @@ In it, you will find the various routes you may wish to implement, which will be
 ### Existing Project Installation
 
 Install via composer.
->require: "shaunpersad/api-foundation": "0.1.5"
+>require: "shaunpersad/api-foundation": "0.1.6"
 
 Add the service provider to your list of providers in `app/config/app.php`:
 >'Shaunpersad\ApiFoundation\ApiFoundationServiceProvider'
@@ -156,7 +177,9 @@ This is the endpoint that, based on whichever Grant Type you are using, particul
                 'password' => '\OAuth2\GrantType\UserCredentials',
                 'client_credentials' => '\OAuth2\GrantType\ClientCredentials',
                 'refresh_token' => '\OAuth2\GrantType\RefreshToken',
-                'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken'
+                'fb_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\FacebookAccessToken',
+                'gplus_access_token' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\GPlusAccessToken',
+                'gplus_server_code' => '\Shaunpersad\ApiFoundation\OAuth2\GrantType\GPlusServerCode',
             );
     ```
 
@@ -177,9 +200,16 @@ This is an example of an API resource.  Passing a valid Access Token to this rou
 ### Facebook routes
 
 There are two additional routes included to demonstrate the Facebook Access Token Grant Type.
-With the Facebook App ID and Secret supplied in the config file, the `/get-facebook-login` route will redirect you to Facebook to log in and authorize your Facebook app.
+With the Facebook App ID and Secret supplied in the config file, the `/get-facebook-login` route will redirect you to Facebook to log in and authorize your app.
 After authorizing, Facebook will redirect you to the `/facebook-login-redirect` route, and display your Facebook access token.
 This Facebook access token can then be sent to the Token endpoint to exchange for one of your app's Access Tokens.
+
+### Google+ routes
+
+There are three additional routes included to demonstrate the two Grant Types associated with Google+, corresponding to the two possible Google+ login flows.
+With the Google Client ID and Secret supplied in the config file, the `/get-gplus-login` route will redirect you to Google to log in and authorize your app.
+After authorizing, Google will redirect you to the `/gplus-login-redirect` route, and display your Google+ access token.
+This Google+ access token can then be sent to the Token endpoint to exchange for one of your app's Access Tokens.
 
 ## IoC Bindings
 
@@ -212,6 +242,9 @@ This Facebook access token can then be sent to the Token endpoint to exchange fo
 
  * **access_token_data** - an *instance* available after successful authentication via the requires_oauth_token filter.
     Contains Access Token data.  You generally won't need to use this.
+
+ * **oauth2_storage** - a *singleton* which creates an instance of Google_Client, required to handle the underlying Google+ auth.
+
 
 ## Helper Classes
 

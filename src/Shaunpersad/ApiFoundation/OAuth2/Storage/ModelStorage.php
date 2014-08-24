@@ -6,6 +6,8 @@ namespace Shaunpersad\ApiFoundation\OAuth2\Storage;
 
 use Auth;
 use Facebook\GraphUser;
+use Google_Service_Oauth2_Tokeninfo;
+use Google_Service_Plus_Person;
 use Hash;
 use OAuth2\Storage\AccessTokenInterface;
 use OAuth2\Storage\AuthorizationCodeInterface;
@@ -14,6 +16,7 @@ use OAuth2\Storage\RefreshTokenInterface;
 use OAuth2\Storage\ScopeInterface;
 use OAuth2\Storage\UserCredentialsInterface;
 use Shaunpersad\ApiFoundation\Interfaces\FacebookAccessTokenInterface;
+use Shaunpersad\ApiFoundation\Interfaces\GPlusAccessTokenInterface;
 use Shaunpersad\ApiFoundation\Models\OauthAccessToken;
 use Shaunpersad\ApiFoundation\Models\OauthAuthorizationCode;
 use Shaunpersad\ApiFoundation\Models\OauthClient;
@@ -27,7 +30,8 @@ class ModelStorage  implements AuthorizationCodeInterface,
     UserCredentialsInterface,
     RefreshTokenInterface,
     ScopeInterface,
-    FacebookAccessTokenInterface {
+    FacebookAccessTokenInterface,
+    GPlusAccessTokenInterface {
 
     public function __construct() {
 
@@ -62,11 +66,16 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getAuthorizationCode($code)
     {
-        $code = OauthAuthorizationCode::find($code)->toArray();
+        $code = OauthAuthorizationCode::find($code);
 
-        $code['expires'] = strtotime($code['expires']);
+        if (!empty($code)) {
 
-        return $code;
+            $code = $code->toArray();
+            $code['expires'] = strtotime($code['expires']);
+
+            return $code;
+        }
+        return null;
     }
 
     /**
@@ -148,11 +157,17 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getAccessToken($oauth_token)
     {
-        $token = OauthAccessToken::find($oauth_token)->toArray();
+        $token = OauthAccessToken::find($oauth_token);
 
-        $token['expires'] = strtotime($token['expires']);
+        if (!empty($token)) {
 
-        return $token;
+            $token = $token->toArray();
+
+            $token['expires'] = strtotime($token['expires']);
+
+            return $token;
+        }
+        return null;
     }
 
     /**
@@ -266,7 +281,13 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getClientDetails($client_id)
     {
-        return OauthClient::find($client_id)->toArray();
+        $client = OauthClient::find($client_id);
+
+        if (!empty($client)) {
+
+            return $client->toArray();
+        }
+        return false;
     }
 
     /**
@@ -373,11 +394,16 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getRefreshToken($refresh_token)
     {
-        $token = OauthRefreshToken::find($refresh_token)->toArray();
+        $token = OauthRefreshToken::find($refresh_token);
 
-        $token['expires'] = strtotime($token['expires']);
+        if (!empty($token)) {
 
-        return $token;
+            $token = $token->toArray();
+            $token['expires'] = strtotime($token['expires']);
+
+            return $token;
+        }
+        return null;
     }
 
     /**
@@ -482,9 +508,12 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getDefaultScope($client_id = null)
     {
-        $results = OauthScope::where('is_default', '=', true)->get(array('scope'))->toArray();
+        $results = OauthScope::where('is_default', '=', true)->get(array('scope'));
 
         if (!empty($results)) {
+
+            $results = $results->toArray();
+
             $default_scope = array_map(function ($row) {
                 return $row['scope'];
             }, $results);
@@ -544,19 +573,19 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getUserInfoByUsername($username) {
 
-        $user_info = OAuthUser::getUserByUsername($username)->toArray();
+        $user_info = OAuthUser::getUserByUsername($username);
 
-        if (empty($user_info)) {
+        if (!empty($user_info)) {
 
-            return false;
+            $user_info = $user_info->toArray();
+
+            $id_field = \Config::get('api-foundation::user_table_id_field');
+
+            return array_merge(array(
+                'user_id' => $user_info[$id_field]
+            ), $user_info);
         }
-
-        $id_field = \Config::get('api-foundation::user_table_id_field');
-
-        return array_merge(array(
-            'user_id' => $user_info[$id_field]
-        ), $user_info);
-
+        return false;
     }
 
     /**
@@ -593,8 +622,12 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function getUserInfoByFacebookId($facebook_id) {
 
-        $user = OAuthUser::where('fb_id', '=', $facebook_id)
-            ->where('login_type', '=', OAuthUser::LOGIN_TYPE_FACEBOOK)
+        $fb_id_field = \Config::get('api-foundation::user_table_fb_id_field');
+        $login_type_field = \Config::get('api-foundation::user_table_login_type_field');
+        $login_type_facebook = \Config::get('api-foundation::user_table_login_type_facebook');
+
+        $user = OAuthUser::where($fb_id_field, '=', $facebook_id)
+            ->where($login_type_field, '=', $login_type_facebook)
             ->first();
 
         if (!empty($user)) {
@@ -618,14 +651,68 @@ class ModelStorage  implements AuthorizationCodeInterface,
      */
     public function createFacebookUser(GraphUser $facebook_user) {
 
+        $fb_id_field = \Config::get('api-foundation::user_table_fb_id_field');
+        $login_type_field = \Config::get('api-foundation::user_table_login_type_field');
+        $login_type_facebook = \Config::get('api-foundation::user_table_login_type_facebook');
+
         $user = new OAuthUser();
         $user->email = $facebook_user->getProperty('email');
         $user->password = Hash::make(str_random(20));
-        $user->fb_id = $facebook_user->getId();
+        $user->$fb_id_field = $facebook_user->getId();
         $user->first_name = $facebook_user->getFirstName();
         $user->last_name = $facebook_user->getLastName();
-        $user->login_type = OAuthUser::LOGIN_TYPE_FACEBOOK;
+        $user->$login_type_field = $login_type_facebook;
         $user->save();
     }
 
+    /**
+     * Gets a User that has logs in with Google Plus, given their Google Plus id.
+     *
+     * @param $gplus_id ;
+     * @return array
+     */
+    public function getUserInfoByGPlusId($gplus_id)
+    {
+        $gplus_id_field = \Config::get('api-foundation::user_table_gplus_id_field');
+        $login_type_field = \Config::get('api-foundation::user_table_login_type_field');
+        $login_type_gplus = \Config::get('api-foundation::user_table_login_type_gplus');
+
+        $user = OAuthUser::where($gplus_id_field, '=', $gplus_id)
+            ->where($login_type_field, '=', $login_type_gplus)
+            ->first();
+
+        if (!empty($user)) {
+
+            $user_info = $user->toArray();
+            $id_field = \Config::get('api-foundation::user_table_id_field');
+
+            return array_merge(array(
+                'user_id' => $user_info[$id_field]
+            ), $user_info);
+        }
+
+        return false;
+
+    }
+
+    /**
+     * @param Google_Service_Plus_Person $gplus_user
+     * @param Google_Service_Oauth2_Tokeninfo $token_info
+     */
+    public function createGPlusUser(Google_Service_Plus_Person $gplus_user, Google_Service_Oauth2_Tokeninfo $token_info)
+    {
+
+        $gplus_id_field = \Config::get('api-foundation::user_table_gplus_id_field');
+        $login_type_field = \Config::get('api-foundation::user_table_login_type_field');
+        $login_type_gplus = \Config::get('api-foundation::user_table_login_type_gplus');
+
+        $user = new OAuthUser();
+        $user->email = $token_info->getEmail();
+        $user->password = Hash::make(str_random(20));
+        $user->$gplus_id_field = $gplus_user->getId();
+        $user->first_name = $gplus_user->getName()->getGivenName();
+        $user->last_name = $gplus_user->getName()->getFamilyName();
+        $user->$login_type_field = $login_type_gplus;
+        $user->save();
+    }
 }
